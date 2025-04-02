@@ -1,4 +1,3 @@
-import { Ship } from './Ship.js';
 import { Cell } from './Cell.js';
 
 export class Gameboard {
