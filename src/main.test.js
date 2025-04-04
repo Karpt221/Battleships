@@ -92,16 +92,16 @@ describe('Gameboard tests', () => {
     ).toBeTruthy();
   });
 
-  test('2 cells Ship placed vertically from 0:0 to 1:0 on the board', () => {
+  test('2 cells Ship placed vertically from 1:1 to 2:1 on the board', () => {
     const gameboard = new Gameboard();
-    gameboard.placeShip(new Ship(2), 0, 0, true);
+    gameboard.placeShip(new Ship(2), 1, 1, true);
     expect(
       gameboard.board.every((row, i) =>
         row.every((cell, j) => {
           if (
-            (['0:0', '1:0'].includes(`${i}:${j}`) &&
+            (['1:1', '2:1'].includes(`${i}:${j}`) &&
               gameboard.getCell(i, j).shipRef === null) ||
-            (!['0:0', '1:0'].includes(`${i}:${j}`) &&
+            (!['1:1', '2:1'].includes(`${i}:${j}`) &&
               gameboard.getCell(i, j).shipRef !== null)
           ) {
             return false;
@@ -113,20 +113,29 @@ describe('Gameboard tests', () => {
     ).toBeTruthy();
   });
 
+  
+
   test('placeShip returns Error when placing Ship out of bounds of Gameboard', () => {
     const gameboard = new Gameboard();
     expect(() => {
       gameboard.placeShip(new Ship(4), 100, 100, false);
-    }).toThrow('Can not place a ship in unavailable postion');
+    }).toThrow('Can not place a ship in unavailable position');
   });
 
   test('placeShip returns Error when placing Ship in position where another Ship already placed', () => {
     const gameboard = new Gameboard();
-
     gameboard.placeShip(new Ship(4), 0, 0, false);
     expect(() => {
       gameboard.placeShip(new Ship(4), 0, 0, false);
-    }).toThrow('Can not place a ship in unavailable postion');
+    }).toThrow('Can not place a ship in unavailable position');
+  });
+
+  test('placeShip returns Error when placing Ship in position adjacent to another Ship', () => {
+    const gameboard = new Gameboard();
+    gameboard.placeShip(new Ship(1), 0, 0, false);
+    expect(() => {
+      gameboard.placeShip(new Ship(1), 0, 1, false);
+    }).toThrow('Can not place a ship in unavailable position');
   });
 
   test('receiveAttack marks Cell as hited and deals hit to a ship', () => {
@@ -137,19 +146,19 @@ describe('Gameboard tests', () => {
     expect(gameboard.getCell(0, 0).shipRef.isSunk()).toBeTruthy();
   });
 
-  test('receiveAttack returns Error when hitting unavailable postion', () => {
+  test('receiveAttack returns Error when hitting unavailable position', () => {
     const gameboard = new Gameboard();
     expect(() => {
       gameboard.receiveAttack(100, 100);
-    }).toThrow('Can not hit unavailable postion');
+    }).toThrow('Can not hit unavailable position');
   });
 
-  test('receiveAttack returns Error when hitting the same postion', () => {
+  test('receiveAttack returns Error when hitting the same position', () => {
     const gameboard = new Gameboard();
     gameboard.receiveAttack(0, 0);
     expect(() => {
       gameboard.receiveAttack(0, 0);
-    }).toThrow('Can not hit unavailable postion');
+    }).toThrow('Can not hit unavailable position');
   });
 
   test('isAllSunk returns proper message when all ships sunk',()=>{
@@ -160,3 +169,9 @@ describe('Gameboard tests', () => {
     expect(gameboard.isAllSunk()).toBeTruthy();
   })
 });
+
+describe('Player tests', ()=>{
+  test('',()=>{
+
+  })
+})
