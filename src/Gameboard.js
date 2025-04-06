@@ -3,9 +3,10 @@ import { Cell } from './Cell.js';
 export class Gameboard {
   #board;
   #ships;
-  #boardSize = 10;
+  #boardSize;
 
-  constructor() {
+  constructor(boardSize = 10) {
+    this.#boardSize = boardSize;
     this.#board = [];
     for (let i = 0; i < this.#boardSize; i++) {
       this.#board[i] = [];
@@ -59,7 +60,12 @@ export class Gameboard {
     for (const step of steps) {
       let newX = x + step[0];
       let newY = y + step[1];
-      if (newX >= 0 && newX < this.#boardSize && newY >= 0 && newY < this.#boardSize) {
+      if (
+        newX >= 0 &&
+        newX < this.#boardSize &&
+        newY >= 0 &&
+        newY < this.#boardSize
+      ) {
         cell = this.getCell(newX, newY);
         if (cell.shipRef !== null) {
           return false;
@@ -98,23 +104,13 @@ export class Gameboard {
   }
 
   receiveAttack(x, y) {
-    try {
-      const cell = this.getCell(x, y);
-      if (cell.isHitted === true) {
-        throw new Error('Can not hit unavailable position');
-      }
-      cell.setIsHitted();
-      if (cell.shipRef !== null) {
-        cell.shipRef.hit();
-      }
-    } catch (error) {
-      if (
-        error.message === 'Can not get a cell in unavailable position' ||
-        error.message === 'Can not hit unavailable position'
-      ) {
-        throw new Error('Can not hit unavailable position');
-      }
-      throw error;
+    const cell = this.getCell(x, y);
+    if (cell.isHitted === true) {
+      return;
+    }
+    cell.setIsHitted();
+    if (cell.shipRef !== null) {
+      cell.shipRef.hit();
     }
   }
 

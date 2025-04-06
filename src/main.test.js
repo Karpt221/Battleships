@@ -1,14 +1,9 @@
 import { Ship } from './Ship.js';
-
 import { Cell } from './Cell.js';
-
 import { Gameboard } from './Gameboard.js';
+import { Player, RobotPlayer } from './Player.js';
 
 describe('Ship tests', () => {
-  // test('Ship constructor creates a proper object', () => {
-  //   const ship = new Ship(1);
-  //   expect(ship.length).toBe(1);
-  // });
   test('Ship constructor throws an error when passing length less than 1 or higher than 4', () => {
     expect(() => {
       new Ship(0);
@@ -27,12 +22,6 @@ describe('Ship tests', () => {
 
 describe('Gameboard tests', () => {
   describe('Cell tests', () => {
-    // test("Cell constructor creates a proper object",()=>{
-    //   const cell = new Cell();
-    //   expect(cell.shipRef).toBeNull();
-    //   expect(cell.isHitted).toBe(false);
-    // })
-
     test('shipRef setter throws an error when passing the wrong type value', () => {
       const cell = new Cell();
       expect(() => {
@@ -42,20 +31,6 @@ describe('Gameboard tests', () => {
         cell.setShipRef(1);
       }).toThrow(Error);
     });
-
-    // test("shipRef setter sets ship properly",()=>{
-    //   const cell = new Cell();
-    //   const ship = new Ship(1);
-    //   cell.setShipRef(ship)
-    //   expect(cell.shipRef instanceof Ship).toBe(true);
-    //   expect(cell.shipRef.length).toBe(1);
-    // })
-
-    // test("setIsHitted marks hitted cell properly", ()=>{
-    //   const cell = new Cell();
-    //   cell.setIsHitted()
-    //   expect(cell.isHitted).toBe(true);
-    // })
   });
 
   test('Gameboard is a 10x10 2d array with Cell as each element', () => {
@@ -113,8 +88,6 @@ describe('Gameboard tests', () => {
     ).toBeTruthy();
   });
 
-  
-
   test('placeShip returns Error when placing Ship out of bounds of Gameboard', () => {
     const gameboard = new Gameboard();
     expect(() => {
@@ -138,40 +111,105 @@ describe('Gameboard tests', () => {
     }).toThrow('Can not place a ship in unavailable position');
   });
 
-  test('receiveAttack marks Cell as hited and deals hit to a ship', () => {
-    const gameboard = new Gameboard();
-    gameboard.placeShip(new Ship(1), 0, 0, false);
-    gameboard.receiveAttack(0, 0);
-    expect(gameboard.getCell(0, 0).isHitted).toBeTruthy();
-    expect(gameboard.getCell(0, 0).shipRef.isSunk()).toBeTruthy();
-  });
-
   test('receiveAttack returns Error when hitting unavailable position', () => {
-    const gameboard = new Gameboard();
+    const gameboard = new Gameboard(10);
     expect(() => {
       gameboard.receiveAttack(100, 100);
-    }).toThrow('Can not hit unavailable position');
+    }).toThrow('Can not get a cell in unavailable position');
   });
 
-  test('receiveAttack returns Error when hitting the same position', () => {
-    const gameboard = new Gameboard();
-    gameboard.receiveAttack(0, 0);
-    expect(() => {
-      gameboard.receiveAttack(0, 0);
-    }).toThrow('Can not hit unavailable position');
-  });
-
-  test('isAllSunk returns proper message when all ships sunk',()=>{
+  test('isAllSunk returns proper message when all ships sunk', () => {
     const gameboard = new Gameboard();
     gameboard.placeShip(new Ship(1), 0, 0, false);
     expect(gameboard.isAllSunk()).toBeFalsy();
     gameboard.receiveAttack(0, 0);
     expect(gameboard.isAllSunk()).toBeTruthy();
-  })
+  });
 });
 
-describe('Player tests', ()=>{
-  test('',()=>{
+describe('Player tests', () => {
+  test('placeShipsRandomly places ships differently with different seeds', () => {
+    const player1 = new Player();
+    const player2 = new Player();
+    const ships = [
+      new Ship(4),
+      new Ship(3),
+      new Ship(3),
+      new Ship(2),
+      new Ship(2),
+      new Ship(2),
+      new Ship(1),
+      new Ship(1),
+      new Ship(1),
+      new Ship(1),
+    ];
+    const seedrandom = require('seedrandom');
+    const generator1 = seedrandom('hello');
+    const generator2 = seedrandom('hi');
+    player1.placeShipsRandomly(ships, generator1);
+    player2.placeShipsRandomly(ships, generator2);
+    const board1 = player1.gameBoard.board;
+    const board2 = player2.gameBoard.board;
+    expect(
+      board1.every((row, i) =>
+        row.every((cell, j) => {
+          if (
+            (board1[i][j].shipRef !== null && board2[i][j].shipRef === null) ||
+            (board1[i][j].shipRef === null && board2[i][j].shipRef !== null)
+          ) {
+            return false;
+          } else if (
+            board1[i][j].shipRef !== null &&
+            board2[i][j].shipRef !== null &&
+            board1[i][j].shipRef.length !== board2[i][j].shipRef.length
+          ) {
+            return false;
+          }
+          return true;
+        })
+      )
+    ).toBeFalsy();
+  });
 
-  })
-})
+  test('attackEnemyCell updates state properly', () => {
+    const player1 = new Player();
+    const player2 = new Player();
+    player1.gameBoard.placeShip(new Ship(1), 0, 0, false);
+    player2.attackEnemyCell(player1.gameBoard, 0, 0);
+    const board1 = player1.gameBoard.board;
+    expect(
+      board1[0][0].isHitted === true &&
+        board1[0][0].shipRef.isSunk() &&
+        player1.gameBoard.isAllSunk()
+    ).toBeTruthy();
+  });
+  describe('RobotPlayer tests', () => {
+    test('chooseCellToAttack selects each time random Cell to attack', () => {
+      const player1 = new RobotPlayer();
+      const player2 = new RobotPlayer();
+      const board1 = player1.gameBoard.board;
+      const board2 = player2.gameBoard.board;
+      const seedrandom = require('seedrandom');
+      const generator = seedrandom('hello');
+      for (let i = 0; i < 5; i++) {
+        player1.chooseAndAttackEnemyCell(player2.gameBoard, generator);
+        player2.chooseAndAttackEnemyCell(player1.gameBoard, generator);
+      }
+      expect(
+        board1.every((row, i) =>
+          row.every((cell, j) => {
+            if (
+              (board1[i][j].isHitted === false &&
+                board2[i][j].isHitted === true) ||
+              (board1[i][j].isHitted === true &&
+                board2[i][j].isHitted === false)
+            ) {
+              return false;
+            }
+            return true;
+          })
+        )
+      ).toBeFalsy();
+    });
+  });
+});
