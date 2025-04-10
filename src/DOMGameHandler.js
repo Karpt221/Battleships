@@ -4,6 +4,7 @@ export class DOMGameHandler {
   constructor() {
     this.humanPlayer = new Player();
     this.robotPlayer = new RobotPlayer();
+    this.winnerExist = false;
     this.DOMRobotBoard = document.querySelector('#robot-board');
     this.DOMHumanBoard = document.querySelector('#human-board');
     this.DOMWinMessage = document.querySelector('.win-mesasge');
@@ -37,6 +38,7 @@ export class DOMGameHandler {
       this.DOMPositionBtn.classList.remove('hide');
       this.DOMStartBtn.classList.remove('hide');
       this.DOMWinMessage.textContent = 'Human is winner';
+      this.winnerExist = true;
     }
 
     this.renderBoard(this.robotPlayer.gameBoard.board, false);
@@ -59,6 +61,7 @@ export class DOMGameHandler {
       this.DOMPositionBtn.classList.remove('hide');
       this.DOMStartBtn.classList.remove('hide');
       this.DOMWinMessage.textContent = 'Robot is winner';
+      this.winnerExist = true;
     }
     this.renderBoard(this.humanPlayer.gameBoard.board, true);
   }
@@ -85,14 +88,16 @@ export class DOMGameHandler {
     });
 
     this.DOMStartBtn.addEventListener('click', () => {
-      if (this.humanPlayer.gameBoard.isEmpty()) {
+      if (this.humanPlayer.gameBoard.isEmpty() || this.winnerExist) {
         this.humanPlayer.gameBoard.cleanBoard();
         this.humanPlayer.placeShipsRandomly(Math.random);
+        this.renderBoard(this.humanPlayer.gameBoard.board, true);
       }
+
       this.robotPlayer.gameBoard.cleanBoard();
       this.robotPlayer.placeShipsRandomly(Math.random);
-      this.renderBoard(this.humanPlayer.gameBoard.board, true);
-      
+      this.renderBoard(this.robotPlayer.gameBoard.board, false);
+
       this.DOMRobotBoard.addEventListener('click', this.realPlayerTurnHandler);
       this.DOMHumanBoard.addEventListener(
         'robotTurn',
@@ -100,6 +105,7 @@ export class DOMGameHandler {
       );
       this.DOMPositionBtn.classList.add('hide');
       this.DOMStartBtn.classList.add('hide');
+      this.winnerExist = false;
     });
   }
 
