@@ -131,23 +131,11 @@ describe('Player tests', () => {
   test('placeShipsRandomly places ships differently with different seeds', () => {
     const player1 = new Player();
     const player2 = new Player();
-    const ships = [
-      new Ship(4),
-      new Ship(3),
-      new Ship(3),
-      new Ship(2),
-      new Ship(2),
-      new Ship(2),
-      new Ship(1),
-      new Ship(1),
-      new Ship(1),
-      new Ship(1),
-    ];
     const seedrandom = require('seedrandom');
     const generator1 = seedrandom('hello');
     const generator2 = seedrandom('hi');
-    player1.placeShipsRandomly(ships, generator1);
-    player2.placeShipsRandomly(ships, generator2);
+    player1.placeShipsRandomly(generator1);
+    player2.placeShipsRandomly(generator2);
     const board1 = player1.gameBoard.board;
     const board2 = player2.gameBoard.board;
     expect(

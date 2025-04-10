@@ -1,4 +1,5 @@
 import { Gameboard } from './Gameboard.js';
+import { Ship } from './Ship.js';
 
 export class Player {
   #gameBoard;
@@ -15,12 +16,24 @@ export class Player {
     return Math.floor(generator() * max);
   }
 
-  placeShipsRandomly(ships, generator = Math.random) {
+  placeShipsRandomly(generator = Math.random) {
     let x;
     let y;
     let isVertical;
     const direction = [false, true];
     let isPlaced;
+    const ships = [
+      new Ship(4),
+      new Ship(3),
+      new Ship(3),
+      new Ship(2),
+      new Ship(2),
+      new Ship(2),
+      new Ship(1),
+      new Ship(1),
+      new Ship(1),
+      new Ship(1),
+    ];
 
     for (const ship of ships) {
       isPlaced = false;
@@ -72,5 +85,6 @@ export class RobotPlayer extends Player {
         attacked = true;
       }
     }
+    return [x, y];
   }
 }

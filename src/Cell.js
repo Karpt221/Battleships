@@ -16,13 +16,16 @@ export class Cell {
   }
 
   setShipRef(ship) {
-    if (!(ship instanceof Ship)) {
+    if (!(ship instanceof Ship) && ship !== null) {
       throw new Error('setShipRef argument should be type of Ship');
     }
     this.#shipRef = ship;
   }
 
-  setIsHitted() {
-    this.#isHitted = true;
+  setIsHitted(isHitted) {
+    if (typeof isHitted !== 'boolean') {
+      throw new Error('setIsHitted argument should be type of Boolean');
+    }
+    this.#isHitted = isHitted;
   }
 }

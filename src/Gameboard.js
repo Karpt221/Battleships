@@ -108,7 +108,7 @@ export class Gameboard {
     if (cell.isHitted === true) {
       return;
     }
-    cell.setIsHitted();
+    cell.setIsHitted(true);
     if (cell.shipRef !== null) {
       cell.shipRef.hit();
     }
@@ -121,5 +121,27 @@ export class Gameboard {
       }
       return false;
     });
+  }
+
+  cleanBoard(){
+    for (let i = 0; i < this.#boardSize; i++) {
+      for (let j = 0; j < this.#boardSize; j++) {
+        this.#board[i][j].setShipRef(null);
+        this.#board[i][j].setIsHitted(false);
+      }
+    }
+    this.#ships = [];
+  }
+
+  isEmpty(){
+    let isEmpty = true;
+    for (let i = 0; i < this.#boardSize; i++) {
+      for (let j = 0; j < this.#boardSize; j++) {
+        if(this.#board[i][j].shipRef !== null){
+          isEmpty = false;
+        }
+      }
+    }
+    return isEmpty;
   }
 }

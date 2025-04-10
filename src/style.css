@@ -1,16 +1,67 @@
 :root {
-    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-    line-height: 1.5;
-    font-weight: 400;
-    box-sizing: border-box;
-    font-synthesis: none;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-  
-  body {
-    margin: 0;
-    min-width: 320px;
-    min-height: 100vh;
-  }
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  box-sizing: border-box;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+.center-wrapper {
+  width: 750px;
+  margin: 0 auto;
+}
+
+.boards-wrapper {
+  display: flex;
+  justify-content: space-evenly;
+}
+.btn-wrapper {
+  margin-top: 10px;
+}
+
+.btn-wrapper button {
+  display: inline-block;
+  margin-left: 100px;
+}
+
+.cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 25px;
+  height: 25px;
+  border: 0.5px solid black;
+  font-size: 30px;
+}
+
+.visible-ship {
+  background-color: rgb(166, 166, 255);
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(10, 25px);
+  width: 250px;
+  line-height: 0;
+}
+
+.win-mesasge {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 24px;
+}
+
+
+.hide{
+  visibility: hidden;
+}
